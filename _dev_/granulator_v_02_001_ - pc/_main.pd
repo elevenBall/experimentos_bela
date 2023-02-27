@@ -1,6 +1,0 @@
-#N canvas 563 54 586 416 12;
-#N canvas 0 22 450 278 (subpatch) 0;
-#X text 0 0 plugdatainfo <?xml version="1.0" encoding="UTF-8"?> <plugdatainfo/>;
-#X coords 0 1 100 -1 1 1 1;
-#X restore 0 0 graph;
-#X obj -1 1 obj_granu_sample_v1;
