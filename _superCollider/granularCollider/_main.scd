@@ -1,12 +1,17 @@
 (
 s.boot;
-Server.default.options.device_("AudioFire4 (2945)");
+//Server.default.options.device_("AudioFire4 (2945)");
+Server.default.options.inDevice_("Colunas (MacBook Air)");
+Server.default.options.outDevice_("Microfone (MacBook Air)");
 Server.default.reboot;
 )
 
+ServerOptions.devices;
+
 /*
-Server.default.options.inDevice_("Built-in Microph");
-Server.default.options.outDevice_("Built-in Output");
+ServerOptions.devices;
+Server.default.options.inDevice_("Colunas (MacBook Air)");
+Server.default.options.outDevice_("Microfone (MacBook Air)");
 */
 
 (
