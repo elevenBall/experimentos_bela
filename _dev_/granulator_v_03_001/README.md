@@ -10,6 +10,17 @@
 ********************************
 
 
+--------------------------------
+------- wav managements --------
+--------------------------------
+<  put your .wav in audioPaGrao/ 
+<  name files "auX.wav" 
+<  start "au1.wav" to au1000.wav
+********************************
+! MUST BE SEQUENTIAL NUMBERING !
+--------------------------------
+
+
 -> use plugdata to open patch <-
     https://plugdata.org/
 
