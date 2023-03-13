@@ -1,3 +1,0 @@
-colar em:
-
-/Users/sergiocoutinho/Library/Application\ Support/SuperCollider/Extensions/mi-UGens
