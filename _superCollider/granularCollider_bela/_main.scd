@@ -16,16 +16,31 @@ s.waitForBoot{
 	"buffer loaded!!!!".postln;
 	(
 	SynthDef("AnalogIn-test",{ arg out=0;
+<<<<<<< HEAD
 		var vPlayBackRate = AnalogIn.ar(0)*3;
+=======
+
+		// val 0.3 - 0.5
+
+		var vPlayBackRate = LinLin.ar(AnalogIn.ar(0), 0.3, 0.5, -2, 2);
+>>>>>>> e13cb7460769d48f90b12085df60ec604a42d84a
 
 		//var vDuration = AnalogIn.ar(1)*3;
 		var vDuration = 1;
 
+<<<<<<< HEAD
 		var vPosition = AnalogIn.ar(1);
 
 		//var vRateTrig = (AnalogIn.ar(3)*3).exprange( 0.0001, 100 );
 		//var vRateTrig = AnalogIn.ar(2).exprange( 0.0001, 1 );
 		var vRateTrig = 10;
+=======
+		var vPosition = LinLin.ar(AnalogIn.ar(1), 0.3, 0.5, -2, 2);
+
+		//var vRateTrig = (AnalogIn.ar(3)*3).exprange( 0.0001, 100 );
+		var vRateTrig = LinLin.ar(AnalogIn.ar(2), 0.3, 0.5, 1, 20);
+		//var vRateTrig = 10;
+>>>>>>> e13cb7460769d48f90b12085df60ec604a42d84a
 
 		var sig = GrainBuf.ar(
 				2,
