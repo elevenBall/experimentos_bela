@@ -34,3 +34,6 @@ x.set(\ctrlRec_1, 1);
 x.set(\ctrlRec_1, 0);
 
 b.play;
+
+
+//{SinOsc.kr(1).poll}.play;
