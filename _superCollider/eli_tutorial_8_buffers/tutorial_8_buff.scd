@@ -1,3 +1,7 @@
+s.boot;
+
+
+(
 ~samples1 = Array.new;
 ~folder = PathName.new(thisProcess.nowExecutingPath.dirname +/+ "wav");
 
@@ -7,7 +11,7 @@
 	~samples1 = ~samples1.add(Buffer.read(s, path.fullPath));
 });
 )
-
+)
 
 
 
@@ -46,16 +50,25 @@ Synth.new(\playBuf, [\buf, ~samples1[(~folder.entries.size.rand)].bufnum]);
 
 (
 SynthDef.new(\bufrd_noise, {
-	arg amp=1, out=0, buf=0, start=0, end=1, freq=1;
+	arg amp=1, out=0, buf=0, start=0, end=1, freq=1, revMix=0.5, revRoom=0.5, revDamp=0.5;
 	var sig, ptr;
 	ptr = LFDNoise1.ar(freq).range(start, end);
 	sig = BufRd.ar(1, buf, ptr);
+	sig = FreeVerb.ar(sig, revMix, revRoom, revDamp);
 	sig = sig * amp;
 	Out.ar(out, sig);
 }).add;
 )
 
+
+g.set(\revMix, 0.8);
+g.set(\revRoom, 0.9);
+
+w.set(\freq, 10);
+
+
 g = Group.new;
+g.free;
 
 
 (
