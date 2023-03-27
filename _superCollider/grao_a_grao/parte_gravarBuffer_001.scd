@@ -8,15 +8,16 @@ Tdef.removeAll;
 )
 
 
-Server.default.options.outDevice_(5);
+/*Server.default.options.outDevice_(5);
 Server.default.options.inDevice_(4);
 Server.default.reboot;
 
 ServerOptions.devices;
+*/
 
 (
 
-~mainOut s= 0;
+~mainOut = 0;
 ~micIn = 0;
 ~recBufSize = 0;
 
@@ -26,6 +27,7 @@ s.waitForBoot({
 	s.sync;
 	~b = Buffer.alloc(s, s.sampleRate * 30);
 
+	s.sync;
 
 
 });

@@ -15,23 +15,20 @@ SynthDef(\granulador_1, {
 		512 //maxGrains
 	);
 	sig = sig * 0.5;
-	Out.ar(0, sig);
+	Out.ar(0, sig!2);
 }).add;
 )
 
 y = Synth.new(\granulador_1);
 
 
-y.set(\position, 0.00);
+y.set(\position, 0.0);
 y.set(\posiLag, 45);
+
 y.set(\grainDur, 0.666);
-y.set(\trigRate, 10);
+
+y.set(\trigRate, 100);
 y.set(\trigLag, 40);
-
-
-y.set(\vPlayBackRate, 0.2);
-y.set(\mix, 0.6);
-y.set(\room, 0.9);
 
 
 
