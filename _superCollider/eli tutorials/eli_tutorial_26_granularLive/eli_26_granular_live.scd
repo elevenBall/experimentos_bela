@@ -23,9 +23,9 @@ SynthDef(\mic, {
 
 
 SynthDef(\ptr, {
-	arg out=0, buf=0;
+	arg out=0, buf=0, rate=1;
 	var sig;
-	sig = Phasor.ar(0, BufRateScale.kr(buf),0 , BufFrames.kr(buf));
+	sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
 	Out.ar(out, sig);
 }).add;
 
@@ -103,7 +103,44 @@ Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);
 Synth(\rec, [\ptrIn, ~ptrBus, \micIn, ~micBus, \buf, b], ~recGrp);
 )
 
-b.play;
+(
+b.zero;
+~g = 25.collect({
+	arg n;
+	Synth(\gran, [
+		\amp, n.linlin(0,4,-3,-20).dbamp,
+		\buf, b,
+		\out, 0,
+		\atk, 1,
+		\rel, 1,
+		\gate, 1,
+		\sync, 1,
+		\dens, exprand(20,40),
+		\baseDur, 0.08,
+		\durRand, 1.5,
+		\rate, 1,
+		\rateRand, 1,
+		\pan, 0.5,
+		\panRand, 0,
+		\grainEnv, -1,
+		\ptrBus, ~ptrBus,
+		\ptrSampleDelay, n.linlin(0,4,20000, s.sampleRate*2),//s.sampleRate/3,
+		\ptrRandSamples,10000,
+		\minPtrDelay, 1000,
+	], ~granGrp);
+});
+)
+
+
+~ptrGrp.set(\rate, 1);
+~ptrGrp.set(\rate, 0);
+
+
+~granGrp.free;
+
+
+~g.do({ arg n; n.set(\gate, 0)});
+~g.do({ arg n; n.set(\gate, 1)});
 
 
 
