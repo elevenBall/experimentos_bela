@@ -131,8 +131,13 @@ b.zero;
 });
 )
 
+~granGrp.set(\rate, 1);
+~granGrp.set(\rateRand, 2.0);
+
 
 ~ptrGrp.set(\rate, 1);
+~ptrGrp.set(\rate, 0);
+
 ~ptrGrp.set(\rate, 0);
 
 
