@@ -1,17 +1,5 @@
-/////https://www.youtube.com/watch?v=MnD8stNB5tE
-/*
-ServerOptions.devices; // all devices
-ServerOptions.inDevices; // input devices
-ServerOptions.outDevices; // output devices
+/////base - https://www.youtube.com/watch?v=MnD8stNB5tE
 
-Server.default.options.inDevice_("AudioFire4 (2945)");
-Server.default.options.outDevice_("AudioFire4 (2945)");
-
-Server.default.options.blockSize = 512;
-Server.default.options.hardwareBufferSize = 512;
-
-Server.default.reboot;
-*/
 
 s.boot;
 
@@ -118,25 +106,25 @@ b.zero;
 ~g = 25.collect({
 	arg n;
 	Synth(\gran, [
-		\amp, n.linlin(0,4,-3,-20).dbamp,
+		\amp, n.linlin(0,-5,0,-10).dbamp, //0,4,-3,-20
 		\buf, b,
 		\out, 0,
 		\atk, 1,
 		\rel, 1,
 		\gate, 1,
 		\sync, 1,
-		\dens, exprand(20,40),
+		\dens, 10,//exprand(20,40), //bom de mexer
 		\baseDur, 0.08,
-		\durRand, 1.5,
-		\rate, 1,
-		\rateRand, 1,
+		\durRand, 1, //min 1
+		\rate, 1, // pitch bom pa mexer
+		\rateRand, 1, //min 1
 		\pan, 0.5,
 		\panRand, 0,
 		\grainEnv, -1,
 		\ptrBus, ~ptrBus,
 		\ptrSampleDelay, n.linlin(0,4,20000, s.sampleRate*2),//s.sampleRate/3,
-		\ptrRandSamples,10000,
-		\minPtrDelay, 1000,
+		\ptrRandSamples,10000, //bom de mexer
+		\minPtrDelay, 1000, //bom de mexer
 	], ~granGrp);
 });
 )
@@ -148,9 +136,29 @@ b.zero;
 
 
 //parameters
-~granGrp.set(\rate, 1);
-~granGrp.set(\rateRand, 1.01);
 
+
+~granGrp.set(\dens, 10);
+~granGrp.set(\amp, -10.dbamp);
+
+
+~granGrp.set(\durRand, 1);
+~granGrp.set(\baseDur, 0.5);
+
+
+~granGrp.set(\rate, 4);
+~granGrp.set(\rateRand, 1.11);
+
+
+~granGrp.set(\panRand, 0.5);
+
+
+~granGrp.set(\ptrSampleDelay, 10);
+
+
+~granGrp.set(\ptrRandSamples, 10);
+
+~granGrp.set(\minPtrDelay, 50000);
 
 
 

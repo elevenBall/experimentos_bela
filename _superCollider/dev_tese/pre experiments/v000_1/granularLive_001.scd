@@ -1,17 +1,5 @@
-/////https://www.youtube.com/watch?v=MnD8stNB5tE
-/*
-ServerOptions.devices; // all devices
-ServerOptions.inDevices; // input devices
-ServerOptions.outDevices; // output devices
+/////base - https://www.youtube.com/watch?v=MnD8stNB5tE
 
-Server.default.options.inDevice_("AudioFire4 (2945)");
-Server.default.options.outDevice_("AudioFire4 (2945)");
-
-Server.default.options.blockSize = 512;
-Server.default.options.hardwareBufferSize = 512;
-
-Server.default.reboot;
-*/
 
 s.boot;
 
