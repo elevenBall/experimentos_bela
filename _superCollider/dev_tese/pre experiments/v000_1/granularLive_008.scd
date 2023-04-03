@@ -15,6 +15,11 @@ s.waitForBoot{
 			~micBus = Bus.audio(s, 1);
 			~ptrBus = Bus.audio(s, 1);
 
+
+			//linhas novas
+			//~holdBus = Bus.audio(s, 1);
+
+
 			"bus abertos!".postln;
 			(0.5).wait;
 
@@ -26,8 +31,17 @@ s.waitForBoot{
 			}).add;
 
 			SynthDef(\ptr, {
-				arg out=0, buf=0, rate=1;
-				var sig;
+				arg out=0, buf=0, rate=1, digiPin=0;
+				var sig, valBtn, ctrBtn=0, inc=0;
+
+				//linhas novas
+				valBtn = DigitalIn.ar(digiPin);
+				if(ctrBtn==0 && valBtn==1)
+				{
+					inc=inc+1;
+					rate = inc%2;
+					ctrBtn = 1;
+				};
 				sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
 				Out.ar(out, sig);
 			}).add;
@@ -51,7 +65,14 @@ s.waitForBoot{
 				minPtrDelay=1000;
 
 				var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
-				totalDelay, maxGrainDur;
+				totalDelay, maxGrainDur, accX, accY, accZ;
+
+
+				accX = AnalogIn.ar(0);
+				accY = AnalogIn.ar(1);
+				accZ = AnalogIn.ar(2);
+
+
 
 
 				env = EnvGen.kr(Env.asr(atk,1,rel), gate, doneAction:2);
