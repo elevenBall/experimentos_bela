@@ -1,0 +1,15 @@
+#N canvas 827 239 527 327 12;
+#N canvas 0 22 450 278 (subpatch) 0;
+#X text 0 0 plugdatainfo <?xml version="1.0" encoding="UTF-8"?> <plugdatainfo/>;
+#X coords 0 1 100 -1 1 1 1;
+#X restore 0 0 graph;
+#X obj 170 125 keyboard 17 80 4 2 0 0 empty empty;
+#X obj 170 310 unpack;
+#X floatatom 170 397 5 0 0 0 - - - 12;
+#X floatatom 240 397 5 0 0 0 - - - 12;
+#X obj 170 538 noteout 1;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 2 1 4 0;
+#X connect 3 0 5 0;
+#X connect 4 0 5 1;
