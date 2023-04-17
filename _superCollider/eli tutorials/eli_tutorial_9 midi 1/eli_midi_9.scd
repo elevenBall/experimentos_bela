@@ -11,14 +11,14 @@ MIDIIn.connect("Recurso IAC");
 
 (
 MIDIdef.noteOn(\noteOnTest, {
-	arg vel, nn, chan, src;
-	[vel, nn].postln;
+	arg nn, vel, chan, src;
+	[nn, vel].postln;
 });
 
 
 MIDIdef.noteOff(\noteOffTest, {
 	arg vel, nn, chan, src;
-	[vel, nn].postln;
+	[nn, "off"].postln;
 });
 )
 
