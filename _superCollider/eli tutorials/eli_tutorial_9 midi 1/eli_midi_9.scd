@@ -23,3 +23,26 @@ MIDIdef.noteOff(\noteOffTest, {
 )
 
 
+MIDIIn.doNoteOnAction(
+
+
+
+
+
+
+
+	// define a MIDI input
+m = MIDIIn.new;
+m.open;
+
+// define a MIDI note on action
+m.doNoteOnAction = { |vel, note, chan|
+    // send a note on message to the default MIDI output
+    MIDIOut.default.noteOn(chan, note, vel);
+};
+
+// define a MIDI note off action
+m.doNoteOffAction = { |vel, note, chan|
+    // send a note off message to the default MIDI output
+    MIDIOut.default.noteOff(chan, note, vel);
+};
