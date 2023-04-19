@@ -12,8 +12,9 @@ s.options.numOutputBusChannels = 2;
 
 s.options.postln;
 */
-(
 
+s.boot;
+(
 s.waitForBoot({
 	(
 		{
@@ -38,112 +39,112 @@ s.waitForBoot({
 			s.sync;
 
 			Routine({
-			SynthDef(\mic, {
-				arg in=0, out=0, amp=1;
-				var sig;
-				sig = SoundIn.ar(in) * amp;
-				Out.ar(out, sig);
-			}).add;
+				SynthDef(\mic, {
+					arg in=0, out=0, amp=1;
+					var sig;
+					sig = SoundIn.ar(in) * amp;
+					Out.ar(out, sig);
+				}).add;
+				s.sync;
+				SynthDef(\ptr, {
+					arg out=0, buf=0, rate=1, digiPin=0;
+					var sig, valBtn, ctrBtn=0, inc=0;
 
-			SynthDef(\ptr, {
-				arg out=0, buf=0, rate=1, digiPin=0;
-				var sig, valBtn, ctrBtn=0, inc=0;
+					//linhas novas
+					valBtn = DigitalIn.ar(digiPin);
 
-				//linhas novas
-				valBtn = DigitalIn.ar(digiPin);
+					/*
+					if(ctrBtn==0 && valBtn==1)
+					{
+					inc=inc+1;
+					rate = inc%2;
+					ctrBtn = 1;
+					};
+					*/
+					rate = valBtn;
+					//rate.poll;
+					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
+					Out.ar(out, sig);
+				}).add;
 
-				/*
-				if(ctrBtn==0 && valBtn==1)
-				{
-				inc=inc+1;
-				rate = inc%2;
-				ctrBtn = 1;
-				};
-				*/
-				rate = valBtn;
-				//rate.poll;
-				sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
-				Out.ar(out, sig);
-			}).add;
+				s.sync;
+				SynthDef(\rec, {
+					arg ptrIn=0, micIn=0, buf=0;
+					var ptr, sig;
+					ptr = In.ar(ptrIn, 1);
+					sig = In.ar(micIn, 1);
+					BufWr.ar(sig, buf, ptr);
+				}).add;
+				s.sync;
 
+				SynthDef(\gran, {
+					arg amp=0.9, buf=0, out=0,
+					atk=1, rel=1, gate=1,
+					sync=1, dens=40, densLag=0,
+					baseDur=0.05, durRand=1,
+					rate=1, rateRand=1, rateLag=0,
+					pan=0, panRand=0,
+					grainEnv=(-1), ptrBus=0, ptrSampleDelay=20000, ptrRandSamples=5000,
+					minPtrDelay=1000;
 
-			SynthDef(\rec, {
-				arg ptrIn=0, micIn=0, buf=0;
-				var ptr, sig;
-				ptr = In.ar(ptrIn, 1);
-				sig = In.ar(micIn, 1);
-				BufWr.ar(sig, buf, ptr);
-			}).add;
-
-
-			SynthDef(\gran, {
-				arg amp=0.9, buf=0, out=0,
-				atk=1, rel=1, gate=1,
-				sync=1, dens=40, densLag=0,
-				baseDur=0.05, durRand=1,
-				rate=1, rateRand=1, rateLag=0,
-				pan=0, panRand=0,
-				grainEnv=(-1), ptrBus=0, ptrSampleDelay=20000, ptrRandSamples=5000,
-				minPtrDelay=1000;
-
-				var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
-				totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax;
-
-
-				accX = AnalogIn.ar(0);
-				accY = AnalogIn.ar(1);
-				accZ = AnalogIn.ar(2);
+					var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
+					totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax;
 
 
-				accX = accX.linlin(0.3, 0.5, 0.0, 1.0);
-				accY = accY.linlin(0.3, 0.5, 0.0, 1.0);
-
-				//accY .poll;
-
-				rate = (rate * (accX * 0.25))+0.8;
+					accX = AnalogIn.ar(0);
+					accY = AnalogIn.ar(1);
+					accZ = AnalogIn.ar(2);
 
 
+					accX = accX.linlin(0.3, 0.5, 0.0, 1.0);
+					accY = accY.linlin(0.3, 0.5, 0.0, 1.0);
 
-				//accX.poll;
+					//accY .poll;
 
-				env = EnvGen.kr(Env.asr(atk,1,rel), gate, doneAction:2);
-				dens = dens.varlag(densLag);
-				densCtrl = Select.ar(sync, [Dust.ar(dens), Impulse.ar(dens)]);
-				durCtrl = baseDur * LFNoise1.ar(100).exprange(1/durRand,durRand);
+					rate = (rate * (accX * 0.25))+0.8;
 
-				durCtrl = durCtrl * (accY * 1);
 
-				rateCtrl = rate * LFNoise1.ar(100).exprange(1/rateRand, rateRand);
-				panCtrl = pan + LFNoise1.kr(100).bipolar(panRand);
 
-				ptrRand = (LFNoise1.ar(100).bipolar(ptrRandSamples))*accX;
+					//accX.poll;
 
-				totalDelay = max(ptrSampleDelay - ptrRand, minPtrDelay);
+					env = EnvGen.kr(Env.asr(atk,1,rel), gate, doneAction:2);
+					dens = dens.varlag(densLag);
+					densCtrl = Select.ar(sync, [Dust.ar(dens), Impulse.ar(dens)]);
+					durCtrl = baseDur * LFNoise1.ar(100).exprange(1/durRand,durRand);
 
-				ptr = In.ar(ptrBus, 1);
-				ptr = ptr - totalDelay;
-				ptr = ptr / BufFrames.kr(buf);
+					durCtrl = durCtrl * (accY * 1);
 
-				maxGrainDur = (totalDelay / rateCtrl) / SampleRate.ir;
-				durCtrl = min(durCtrl, maxGrainDur);
+					rateCtrl = rate * LFNoise1.ar(100).exprange(1/rateRand, rateRand);
+					panCtrl = pan + LFNoise1.kr(100).bipolar(panRand);
 
-				sig = GrainBuf.ar(
-					2,
-					densCtrl,
-					durCtrl,
-					buf,
-					rateCtrl.varlag(rateLag),
-					ptr,
-					2,
-					panCtrl,
-					grainEnv,
-					maxGrains:7
-				);
+					ptrRand = (LFNoise1.ar(100).bipolar(ptrRandSamples))*accX;
 
-				sig = sig * env * amp;
-				Out.ar(out, sig);
-				//s.sync;
-			}).add;
+					totalDelay = max(ptrSampleDelay - ptrRand, minPtrDelay);
+
+					ptr = In.ar(ptrBus, 1);
+					ptr = ptr - totalDelay;
+					ptr = ptr / BufFrames.kr(buf);
+
+					maxGrainDur = (totalDelay / rateCtrl) / SampleRate.ir;
+					durCtrl = min(durCtrl, maxGrainDur);
+
+					sig = GrainBuf.ar(
+						2,
+						densCtrl,
+						durCtrl,
+						buf,
+						rateCtrl.varlag(rateLag),
+						ptr,
+						2,
+						panCtrl,
+						grainEnv,
+						maxGrains:7
+					);
+
+					sig = sig * env * amp;
+					Out.ar(out, sig);
+					//s.sync;
+				}).add;
 			}).play;
 
 			"synthdefs adicionados!".postln;
@@ -156,6 +157,7 @@ s.waitForBoot({
 
 			"grupos carregados!".postln;
 			(0.5).wait;
+			s.sync;
 
 			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
 			Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);
@@ -190,7 +192,7 @@ s.waitForBoot({
 				], ~granGrp);
 			});
 
-
+			s.sync;
 			"a tocar!!".postln;
 			(0.5).wait;
 
