@@ -14,6 +14,7 @@ s.options.postln;
 
 s.boot;
 (
+s.freeAll;
 Routine({
 
 	b = Buffer.alloc(s, s.sampleRate * 5);
@@ -25,7 +26,7 @@ Routine({
 	~micBus = Bus.audio(s, 1);
 	~ptrBus = Bus.audio(s, 1);
 
-	~btn1_bus = Bus.audio(s, 1);
+	~btn1_bus = Bus.control(s, 1);
 	~accX_bus = Bus.audio(s, 1);
 	~accY_bus = Bus.audio(s, 1);
 	~accZ_bus = Bus.audio(s, 1);
@@ -33,6 +34,38 @@ Routine({
 
 	s.sync;
 
+	//  sensores  //////////////////////////////////////
+
+	SynthDef(\synthBtn1, {
+		var sig = \sig1.ar(0);
+		//sig = DigitalIn.ar(\digipin.kr(0));
+		Out.ar(\out.kr(0), sig);
+	}).add;
+
+	SynthDef(\synthAccX, {
+		var sig = \sig1.ar(0);
+		//sig = AnalogIn.ar(0);
+		//sig = LFNoise1.ar(100).range(0.3,0.5);
+		Out.ar(\out.ar(0), sig);
+	}).add;
+
+	SynthDef(\synthAccY, {
+		var sig = \sig1.ar(0);
+		//sig = AnalogIn.ar(1);
+		//sig = LFNoise1.ar(100).range(0.3,0.5);
+		Out.ar(\out.ar(0), sig);
+	}).add;
+
+	SynthDef(\synthAccZ, {
+		var sig = \sig1.ar(0);
+		//sig = AnalogIn.ar(2);
+		//sig = LFNoise1.ar(100).range(0.3,0.5);
+		Out.ar(\out.ar(0), sig);
+	}).add;
+
+
+
+	///////////////////////////////////////////////////
 
 	SynthDef(\mic, {
 		arg in=0, out=0, amp=1;
@@ -43,14 +76,9 @@ Routine({
 
 
 	SynthDef(\ptr, {
-		arg out=0, buf=0, rate=1, digiPin=0;
-		var sig, valBtn, ctrBtn=0, inc=0;
-
-
-		valBtn = DigitalIn.ar(digiPin);
-		rate = valBtn;
-
-
+		arg out=0, buf=0;
+		var sig, rate;
+		rate = In.ar(\btn1.kr(1),1);
 		sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
 		Out.ar(out, sig);
 	}).add;
@@ -78,16 +106,20 @@ Routine({
 		var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
 		totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax;
 
+		//accX = AnalogIn.ar(0);
+		//accY = AnalogIn.ar(1);
+		//accZ = AnalogIn.ar(2);
 
-		accX = AnalogIn.ar(0);
-		accY = AnalogIn.ar(1);
-		accZ = AnalogIn.ar(2);
+		accX = In.ar(\accXvar.ar(0),1);
+		accY = In.ar(\accYvar.ar(0),1);
+		accZ = In.ar(\accZvar.ar(0),1).poll;
+
 
 		accX = accX.linlin(0.3, 0.5, 0.0, 1.0);
 		accY = accY.linlin(0.3, 0.5, 0.0, 1.0);
+		accZ = accY.linlin(0.3, 0.5, 0.0, 1.0);
 
 		rate = (rate * (accX * 0.25))+0.8;
-
 
 		env = EnvGen.kr(Env.asr(atk,1,rel), gate, doneAction:2);
 		dens = dens.varlag(densLag);
@@ -134,8 +166,8 @@ Routine({
 
 
 
-
-	~micGrp = Group.new;
+	~sensGrp = Group.new;
+	~micGrp = Group.after(~sensGrp);
 	~ptrGrp = Group.after(~micGrp);
 	~recGrp = Group.after(~ptrGrp);
 	~granGrp = Group.after(~recGrp);
@@ -145,9 +177,14 @@ Routine({
 	s.sync;
 
 
+	~debugBtn1 = Synth(\synthBtn1, [\out, ~btn1_bus], ~sensGrp);
+	~debugX = Synth(\synthAccX, [\out, ~accX_bus], ~sensGrp);
+	~debugY = Synth(\synthAccY, [\out, ~accY_bus], ~sensGrp);
+	~debugZ = Synth(\synthAccZ, [\out, ~accZ_bus], ~sensGrp);
+
 
 	Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
-	Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);
+	Synth(\ptr, [\buf, b, \out, ~ptrBus, \btn1, ~btn1_bus], ~ptrGrp);
 	Synth(\rec, [\ptrIn, ~ptrBus, \micIn, ~micBus, \buf, b], ~recGrp);
 
 
@@ -159,6 +196,9 @@ Routine({
 	~g = 5.collect({ // val original 25
 		arg n;
 		Synth(\gran, [
+			\accXvar, ~accX_bus,
+			\accYvar, ~accY_bus,
+			\accZvar, ~accZ_bus,
 			\amp, n.linlin(0,-5,0,-10).dbamp, //0,4,-3,-20
 			\buf, b,
 			\out, 0,
