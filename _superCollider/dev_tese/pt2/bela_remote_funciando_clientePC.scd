@@ -7,7 +7,7 @@ t = Server.remote(\remote, NetAddr("bela.local", 57110), o); // set to correct a
 t.makeWindow; // make a window for monitoring
 )
 
-
+Server.default = t;
 s.boot;
 s.reboot;
 
