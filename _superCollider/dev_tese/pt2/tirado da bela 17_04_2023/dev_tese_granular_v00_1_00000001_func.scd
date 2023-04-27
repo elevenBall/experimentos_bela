@@ -18,7 +18,7 @@ s.boot;
 s.waitForBoot({
 	(
 		{
-			s.freeAll;
+			//s.freeAll;
 			"server booted!".postln;
 
 			b = Buffer.alloc(s, s.sampleRate * 5);
@@ -86,7 +86,7 @@ s.waitForBoot({
 					rate=1, rateRand=1, rateLag=0,
 					pan=0, panRand=0,
 					grainEnv=(-1), ptrBus=0, ptrSampleDelay=20000, ptrRandSamples=5000,
-					minPtrDelay=1000;
+					minPtrDelay=1000, micBus_1=0;
 
 					var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
 					totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax;
@@ -105,6 +105,7 @@ s.waitForBoot({
 					rate = (rate * (accX * 0.25))+0.8;
 
 
+					// FALTA O 3 analog in
 
 					//accX.poll;
 
@@ -137,7 +138,7 @@ s.waitForBoot({
 					durCtrl = min(durCtrl, maxGrainDur);
 
 					//////////////////////////////////////
-					durCtrl = durCtrl * (AnalogIn.ar(3)*10);
+					durCtrl = durCtrl * (AnalogIn.ar(4)*10);
 					//////////////////////////////////////
 					rateCtrl = rateCtrl * (AnalogIn.ar(6)*2) + 0.1;
 
@@ -156,6 +157,7 @@ s.waitForBoot({
 					);
 
 					sig = sig * env * amp;
+					sig = sig + SoundIn.ar(0);
 					Out.ar(out, sig);
 					//s.sync;
 				}).add;
