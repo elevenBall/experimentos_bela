@@ -2,11 +2,11 @@
 
 (
 Window.closeAll;
-w = Window("janela1", Rect.new(750,50,500,200))
+w = Window("janela1", Rect(50,600,1349,515))
 .front
 .alwaysOnTop_(true);
 
-~btn1 = Button(w, Rect(200,20,30,30))
+~btn1 = Button(w, Rect(1063,320,55,55))
 .states_([
 	["I", Color.white, Color.rand],
 	["0", Color.black, Color.white],
@@ -17,22 +17,24 @@ w = Window("janela1", Rect.new(750,50,500,200))
 	//butt.value.postln;
 	cf = butt.value;
 	cf = (cf*(-1))+1;
-	~debugBtn1.set(\sig1, cf);
+	//~debugBtn1.set(\sig1, cf);
 });
 
 
-~slider1 = Slider(w, Rect.new(20,20,150,30))
+~slider1 = Slider(w, Rect.new(55,55,55,405))
+.orientation_(\vertical)
 .action_({
 	arg obj;
 	var cf;
 	w.view.background_(Color.rand);
 	//obj.value.postln;
 	cf = obj.value;
-	~debugX.set(\sig1, cf);
+	//~debugX.set(\sig1, cf);
 });
 
 
-~slider2 = Slider(w, Rect.new(20,70,150,30))
+~slider2 = Slider(w, Rect.new(165,55,55,405))
+.orientation_(\vertical)
 .action_({
 	arg obj;
 	var cf;
@@ -41,11 +43,11 @@ w = Window("janela1", Rect.new(750,50,500,200))
 	~slider3.background_(Color.rand);
 	//obj.value.postln;
 	cf = obj.value;
-	~debugY.set(\sig1, cf);
+	//~debugY.set(\sig1, cf);
 });
 
 
-~slider3 = Slider(w, Rect.new(20,120,150,30))
+~slider3 = Slider(w, Rect(888,405,405,55))
 .action_({
 	arg obj;
 	var cf=1;
@@ -54,8 +56,10 @@ w = Window("janela1", Rect.new(750,50,500,200))
 	~slider3.knobColor_ (Color.rand);
 	//obj.value.postln;
 	cf = obj.value;
-	~debugZ.set(\sig1, cf);
+	//~debugZ.set(\sig1, cf);
 });
+
+~slider2D_1 = Slider2D(w, Rect(888, 55, 405, 240))
 
 
 )
