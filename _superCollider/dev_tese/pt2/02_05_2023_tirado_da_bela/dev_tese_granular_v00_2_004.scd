@@ -34,11 +34,13 @@ s.waitForBoot({
 			~accX_bus = Bus.audio(s, 1);
 			~accY_bus = Bus.audio(s, 1);
 			~accZ_bus = Bus.audio(s, 1);
-			~hold_bus = Bus.control(s, 1);
+			~btnHold_bus = Bus.control(s, 1);
 			~pot1_bus = Bus.audio(s, 1);
 			~pot2_bus = Bus.audio(s, 1);
 			~fader1_bus = Bus.audio(s, 1);
 			~fader2_bus = Bus.audio(s, 1);
+
+
 
 			s.sync;
 			"bus abertos!".postln;
@@ -49,6 +51,7 @@ s.waitForBoot({
 				SynthDef(\synth_accX, {
 					var sig;
 					sig = AnalogIn.ar(0);
+
 					Out.ar(\out.ar(0), sig);
 				}).add;
 				SynthDef(\synth_accY, {
@@ -65,7 +68,7 @@ s.waitForBoot({
 				//////////// HOLD BTN
 				SynthDef(\synth_btn1, {
 					var sig;
-					sig = DigitalIn.kr(digiPin);
+					sig = DigitalIn.kr(0);
 					Out.ar(\out.kr(0), sig);
 				}).add;
 
@@ -211,9 +214,10 @@ s.waitForBoot({
 			Synth(\synth_accX, [\out, ~accX_bus], ~ctrlGrp);
 			Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
 			Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
+			Synth(\synth_btn1, [\out, ~btnHold_bus], ~ctrlGrp);
 
 			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
-			Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);
+			Synth(\ptr, [\buf, b, \out, ~ptrBus, \ptr_btnHold_bus, ~btnHold_bus], ~ptrGrp);
 			Synth(\rec, [\ptrIn, ~ptrBus, \micIn, ~micBus, \buf, b], ~recGrp);
 
 			s.sync;
@@ -254,4 +258,4 @@ s.waitForBoot({
 	)
 });
 )
-ServerQuit.add({ 0.exit }); // quit if the button is pressed
+//ServerQuit.add({ 0.exit }); // quit if the button is pressed

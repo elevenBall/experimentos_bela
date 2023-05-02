@@ -37,32 +37,32 @@ Routine({
 	//  sensores  //////////////////////////////////////
 
 	SynthDef(\synthBtn1, {
-		//var sig = \sig1.ar(0);
-		var sig;
-		sig = DigitalIn.ar(\digipin.kr(0));
+		var sig = \sig1.ar(0);
+		//var sig;
+		//sig = DigitalIn.ar(\digipin.kr(0));
 		Out.ar(\out.kr(0), sig);
 	}).add;
 
 	SynthDef(\synthAccX, {
-		//var sig = \sig1.ar(0);
-		var sig;
-		sig = AnalogIn.ar(0);
+		var sig = \sig1.ar(0);
+		//var sig;
+		//sig = AnalogIn.ar(0);
 		//sig = LFNoise1.ar(100).range(0.3,0.5);
 		Out.ar(\out.ar(0), sig);
 	}).add;
 
 	SynthDef(\synthAccY, {
-		//var sig = \sig1.ar(0);
-		var sig;
-		sig = AnalogIn.ar(1);
+		var sig = \sig1.ar(0);
+		//var sig;
+		//sig = AnalogIn.ar(1);
 		//sig = LFNoise1.ar(100).range(0.3,0.5);
 		Out.ar(\out.ar(0), sig);
 	}).add;
 
 	SynthDef(\synthAccZ, {
-		//var sig = \sig1.ar(0);
-		var sig;
-		sig = AnalogIn.ar(2);
+		var sig = \sig1.ar(0);
+		//var sig;
+		//sig = AnalogIn.ar(2);
 		//sig = LFNoise1.ar(100).range(0.3,0.5);
 		Out.ar(\out.ar(0), sig);
 	}).add;
@@ -181,10 +181,10 @@ Routine({
 	s.sync;
 
 
-	~debugBtn1 = Synth(\synthBtn1, [\out, ~btn1_bus], ~sensGrp);
-	~debugX = Synth(\synthAccX, [\out, ~accX_bus], ~sensGrp);
-	~debugY = Synth(\synthAccY, [\out, ~accY_bus], ~sensGrp);
-	~debugZ = Synth(\synthAccZ, [\out, ~accZ_bus], ~sensGrp);
+	~debugBtn1 = Synth(\synthBtn1, [\out, ~btn1_bus], ~sensGrp);//.play;
+	~debugX = Synth(\synthAccX, [\out, ~accX_bus], ~sensGrp);//.play;
+	~debugY = Synth(\synthAccY, [\out, ~accY_bus], ~sensGrp);//.play;
+	~debugZ = Synth(\synthAccZ, [\out, ~accZ_bus], ~sensGrp);//.play;
 
 
 	Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
