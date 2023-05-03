@@ -34,7 +34,7 @@ s.waitForBoot({
 			~accX_bus = Bus.audio(s, 1);
 			~accY_bus = Bus.audio(s, 1);
 			~accZ_bus = Bus.audio(s, 1);
-			~hold_bus = Bus.control(s, 1);
+			~hold_bus = Bus.audio(s, 1);
 			~pot1_bus = Bus.audio(s, 1);
 			~pot2_bus = Bus.audio(s, 1);
 			~fader1_bus = Bus.audio(s, 1);
@@ -61,6 +61,34 @@ s.waitForBoot({
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
+				SynthDef(\synth_hold, {
+					var sig;
+					sig = DigitalIn.ar(0);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+
+				SynthDef(\synth_pot1, {
+					var sig;
+					sig = AnalogIn.ar(3);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+				SynthDef(\synth_pot2, {
+					var sig;
+					sig = AnalogIn.ar(4);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+
+				SynthDef(\synth_fader1, {
+					var sig;
+					sig = AnalogIn.ar(5);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+				SynthDef(\synth_fader2, {
+					var sig;
+					sig = AnalogIn.ar(6);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+
 				s.sync;
 
 				SynthDef(\mic, {
@@ -73,20 +101,14 @@ s.waitForBoot({
 				s.sync;
 
 				SynthDef(\ptr, {
-					arg out=0, buf=0, rate=1, digiPin=0;
-					var sig, valBtn, ctrBtn=0, inc=0;
-
-					//linhas novas
-					valBtn = DigitalIn.ar(digiPin);
-					rate = valBtn;
-
-					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
+					arg out=0, buf=0, rate=1;
+					var sig;
+					rate = In.ar(\valBtn.ar(0));
+					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate, 0, BufFrames.kr(buf));
 					Out.ar(out, sig);
 				}).add;
 
-
 				s.sync;
-
 
 				SynthDef(\rec, {
 					arg ptrIn=0, micIn=0, buf=0;
@@ -96,9 +118,7 @@ s.waitForBoot({
 					BufWr.ar(sig, buf, ptr);
 				}).add;
 
-
 				s.sync;
-
 
 				SynthDef(\gran, {
 					arg amp=0.9, buf=0, out=0,
@@ -111,8 +131,7 @@ s.waitForBoot({
 					minPtrDelay=1000, micBus_1=0;
 
 					var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
-					totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax;
-
+					totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax, pot1, pot2, fader1, fader2;
 
 					accX = In.ar(\gr_accX_bus.ar(0), 1);
 					accY = In.ar(\gr_accY_bus.ar(0), 1);
@@ -122,31 +141,36 @@ s.waitForBoot({
 					accY = accY.linlin(0.3, 0.5, 0.0, 1.0);
 					accZ = accZ.linlin(0.3, 0.5, 0.0, 1.0);
 
+					pot1 = In.ar(\gr_pot1_bus.ar(0), 1);
+					pot2 = In.ar(\gr_pot2_bus.ar(0), 1);
+					fader1 = In.ar(\gr_fader1_bus.ar(0), 1);
+					fader2 = In.ar(\gr_fader2_bus.ar(0), 1);
+
+					/////////////////////////////////////
 					rate = (rate * (accX * 0.25))+0.8;
+					/////////////////////////////////////
 
-
-					// FALTA O 3 analog in
-
-					//accX.poll;
-
+					// FALTA O pot 1 analog in
 					env = EnvGen.kr(Env.asr(atk,1,rel), gate, doneAction:2);
-
 					dens = dens.varlag(densLag);
 
-					//////////////////////////////////////
-					dens = dens * (AnalogIn.ar(5)*10)+1;
-
-
+					/////////////////////////////////////
+					dens = dens * (fader1*10) +1;
+					/////////////////////////////////////
 
 					densCtrl = Select.ar(sync, [Dust.ar(dens), Impulse.ar(dens)]);
 					durCtrl = baseDur * LFNoise1.ar(100).exprange(1/durRand,durRand);
 
+					/////////////////////////////////////
 					durCtrl = durCtrl * (accY * 1);
+					/////////////////////////////////////
 
 					rateCtrl = rate * LFNoise1.ar(100).exprange(1/rateRand, rateRand);
 					panCtrl = pan + LFNoise1.kr(100).bipolar(panRand);
 
-					ptrRand = (LFNoise1.ar(100).bipolar(ptrRandSamples))*accX;
+					/////////////////////////////////////
+					ptrRand = (LFNoise1.ar(100).bipolar(ptrRandSamples))*(pot1*1000);
+					/////////////////////////////////////
 
 					totalDelay = max(ptrSampleDelay - ptrRand, minPtrDelay);
 
@@ -158,10 +182,10 @@ s.waitForBoot({
 					durCtrl = min(durCtrl, maxGrainDur);
 
 					//////////////////////////////////////
-					durCtrl = durCtrl * (AnalogIn.ar(4)*10);
+					durCtrl = durCtrl * (pot2*10);
 					//////////////////////////////////////
-					rateCtrl = rateCtrl * (AnalogIn.ar(6)*2) + 0.1;
-
+					rateCtrl = rateCtrl * (fader2*2) + 0.1;
+					/////////////////////////////////////
 
 					sig = GrainBuf.ar(
 						2,
@@ -173,12 +197,10 @@ s.waitForBoot({
 						2,
 						panCtrl,
 						grainEnv,
-						maxGrains:20
+						maxGrains:15
 					);
-
 					sig = sig * env * amp;
-
-					sig = sig + In.ar(micBus_1, 1);
+					sig = (sig*0.8) + (In.ar(micBus_1, 1)*0.8);
 					Out.ar(out, sig);
 					s.sync
 				}).add;
@@ -201,8 +223,15 @@ s.waitForBoot({
 			~x_accy = Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
 			~x_accZ = Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
 
+			~x_hold = Synth(\synth_hold, [\out, ~hold_bus], ~ctrlGrp);
+
+			~x_pot1 = Synth(\synth_pot1, [\out, ~pot1_bus], ~ctrlGrp);
+			~x_pot2 = Synth(\synth_pot2, [\out, ~pot2_bus], ~ctrlGrp);
+			~x_fader1 = Synth(\synth_fader1, [\out, ~fader1_bus], ~ctrlGrp);
+			~x_fader2 = Synth(\synth_fader2, [\out, ~fader2_bus], ~ctrlGrp);
+
 			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
-			Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);
+			Synth(\ptr, [\buf, b, \out, ~ptrBus, \valBtn, ~hold_bus], ~ptrGrp);
 			Synth(\rec, [\ptrIn, ~ptrBus, \micIn, ~micBus, \buf, b], ~recGrp);
 
 			s.sync;
@@ -234,7 +263,11 @@ s.waitForBoot({
 					\micBus_1, ~micBus,
 					\gr_accX_bus, ~accX_bus,
 					\gr_accY_bus, ~accY_bus,
-					\gr_accZ_bus, ~accZ_bus
+					\gr_accZ_bus, ~accZ_bus,
+					\gr_pot1_bus, ~pot1_bus,
+					\gr_pot2_bus, ~pot2_bus,
+					\gr_fader1_bus, ~fader1_bus,
+					\gr_fader2_bus, ~fader2_bus
 				], ~granGrp);
 			});
 			s.sync;

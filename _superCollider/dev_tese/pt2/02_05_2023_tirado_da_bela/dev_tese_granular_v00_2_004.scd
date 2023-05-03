@@ -34,7 +34,7 @@ s.waitForBoot({
 			~accX_bus = Bus.audio(s, 1);
 			~accY_bus = Bus.audio(s, 1);
 			~accZ_bus = Bus.audio(s, 1);
-			~hold_bus = Bus.control(s, 1);
+			~hold_bus = Bus.audio(s, 1);
 			~pot1_bus = Bus.audio(s, 1);
 			~pot2_bus = Bus.audio(s, 1);
 			~fader1_bus = Bus.audio(s, 1);
@@ -61,6 +61,12 @@ s.waitForBoot({
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
+				SynthDef(\synth_hold, {
+					var sig;
+					sig = DigitalIn.ar(0);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+
 				s.sync;
 
 				SynthDef(\mic, {
@@ -73,14 +79,10 @@ s.waitForBoot({
 				s.sync;
 
 				SynthDef(\ptr, {
-					arg out=0, buf=0, rate=1, digiPin=0;
-					var sig, valBtn, ctrBtn=0, inc=0;
-
-					//linhas novas
-					valBtn = DigitalIn.ar(digiPin);
-					rate = valBtn;
-
-					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
+					arg out=0, buf=0, rate=1;
+					var sig;
+					rate = In.ar(\valBtn.ar(0));
+					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate, 0, BufFrames.kr(buf));
 					Out.ar(out, sig);
 				}).add;
 
@@ -201,8 +203,11 @@ s.waitForBoot({
 			~x_accy = Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
 			~x_accZ = Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
 
+			~x_hold = Synth(\synth_hold, [\out, ~hold_bus], ~ctrlGrp);
+
+
 			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
-			Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);
+			Synth(\ptr, [\buf, b, \out, ~ptrBus, \valBtn, ~hold_bus], ~ptrGrp);
 			Synth(\rec, [\ptrIn, ~ptrBus, \micIn, ~micBus, \buf, b], ~recGrp);
 
 			s.sync;
