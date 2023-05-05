@@ -208,9 +208,9 @@ s.waitForBoot({
 			s.sync;
 			"grupos carregados!".postln;
 
-			Synth(\synth_accX, [\out, ~accX_bus], ~ctrlGrp);
-			Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
-			Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
+			~x_accX = Synth(\synth_accX, [\out, ~accX_bus], ~ctrlGrp);
+			~x_accy = Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
+			~x_accZ = Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
 
 			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
 			Synth(\ptr, [\buf, b, \out, ~ptrBus], ~ptrGrp);

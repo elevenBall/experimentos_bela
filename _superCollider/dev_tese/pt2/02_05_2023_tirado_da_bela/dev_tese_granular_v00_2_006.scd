@@ -34,37 +34,20 @@ s.waitForBoot({
 			~accX_bus = Bus.audio(s, 1);
 			~accY_bus = Bus.audio(s, 1);
 			~accZ_bus = Bus.audio(s, 1);
-<<<<<<< HEAD
-			~btnHold_bus = Bus.control(s, 1);
-=======
 			~hold_bus = Bus.audio(s, 1);
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
 			~pot1_bus = Bus.audio(s, 1);
 			~pot2_bus = Bus.audio(s, 1);
 			~fader1_bus = Bus.audio(s, 1);
 			~fader2_bus = Bus.audio(s, 1);
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
 			s.sync;
 			"bus abertos!".postln;
 
 			Routine({
 
-<<<<<<< HEAD
-				//////////// ACCELEROMETRO
 				SynthDef(\synth_accX, {
 					var sig;
 					sig = AnalogIn.ar(0);
-
-=======
-				SynthDef(\synth_accX, {
-					var sig;
-					sig = AnalogIn.ar(0);
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
 					Out.ar(\out.ar(0), sig);
 				}).add;
 				SynthDef(\synth_accY, {
@@ -78,25 +61,36 @@ s.waitForBoot({
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
-<<<<<<< HEAD
-				//////////// HOLD BTN
-				SynthDef(\synth_btn1, {
-					var sig;
-					sig = DigitalIn.kr(0);
-					Out.ar(\out.kr(0), sig);
-				}).add;
-
-
-
-
-=======
 				SynthDef(\synth_hold, {
 					var sig;
 					sig = DigitalIn.ar(0);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
+				SynthDef(\synth_pot1, {
+					var sig;
+					sig = AnalogIn.ar(3);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+				SynthDef(\synth_pot2, {
+					var sig;
+					sig = AnalogIn.ar(4);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+
+				SynthDef(\synth_fader1, {
+					var sig;
+					sig = AnalogIn.ar(5);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+				SynthDef(\synth_fader2, {
+					var sig;
+					sig = AnalogIn.ar(6);
+					Out.ar(\out.ar(0), sig);
+				}).add;
+
+
+
 				s.sync;
 
 				SynthDef(\mic, {
@@ -109,21 +103,10 @@ s.waitForBoot({
 				s.sync;
 
 				SynthDef(\ptr, {
-<<<<<<< HEAD
-					arg out=0, buf=0, rate=1, digiPin=0;
-					var sig, valBtn, ctrBtn=0, inc=0;
-
-					//linhas novas
-					valBtn = DigitalIn.ar(digiPin);
-					rate = valBtn;
-
-					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate,0 , BufFrames.kr(buf));
-=======
 					arg out=0, buf=0, rate=1;
 					var sig;
 					rate = In.ar(\valBtn.ar(0));
 					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate, 0, BufFrames.kr(buf));
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
 					Out.ar(out, sig);
 				}).add;
 
@@ -154,7 +137,7 @@ s.waitForBoot({
 					minPtrDelay=1000, micBus_1=0;
 
 					var sig, env, densCtrl, durCtrl, rateCtrl, panCtrl, ptr, ptrRand,
-					totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax;
+					totalDelay, maxGrainDur, accX, accY, accZ,accXmin, accXmax, pot1, pot2, fader1, fader2;
 
 
 					accX = In.ar(\gr_accX_bus.ar(0), 1);
@@ -165,10 +148,19 @@ s.waitForBoot({
 					accY = accY.linlin(0.3, 0.5, 0.0, 1.0);
 					accZ = accZ.linlin(0.3, 0.5, 0.0, 1.0);
 
+
+					pot1 = In.ar(\gr_pot1_bus.ar(0), 1);
+					pot2 = In.ar(\gr_pot2_bus.ar(0), 1);
+					fader1 = In.ar(\gr_fader1_bus.ar(0), 1);
+					fader2 = In.ar(\gr_fader2_bus.ar(0), 1);
+
+
+
+
 					rate = (rate * (accX * 0.25))+0.8;
 
 
-					// FALTA O 3 analog in
+					// FALTA O pot 1 analog in
 
 					//accX.poll;
 
@@ -177,7 +169,7 @@ s.waitForBoot({
 					dens = dens.varlag(densLag);
 
 					//////////////////////////////////////
-					dens = dens * (AnalogIn.ar(5)*10)+1;
+					dens = dens * (fader1*10) +1;
 
 
 
@@ -201,9 +193,9 @@ s.waitForBoot({
 					durCtrl = min(durCtrl, maxGrainDur);
 
 					//////////////////////////////////////
-					durCtrl = durCtrl * (AnalogIn.ar(4)*10);
+					durCtrl = durCtrl * (pot2*10);
 					//////////////////////////////////////
-					rateCtrl = rateCtrl * (AnalogIn.ar(6)*2) + 0.1;
+					rateCtrl = rateCtrl * (fader2*2) + 0.1;
 
 
 					sig = GrainBuf.ar(
@@ -240,25 +232,20 @@ s.waitForBoot({
 			s.sync;
 			"grupos carregados!".postln;
 
-<<<<<<< HEAD
-			Synth(\synth_accX, [\out, ~accX_bus], ~ctrlGrp);
-			Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
-			Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
-			Synth(\synth_btn1, [\out, ~btnHold_bus], ~ctrlGrp);
-
-			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
-			Synth(\ptr, [\buf, b, \out, ~ptrBus, \ptr_btnHold_bus, ~btnHold_bus], ~ptrGrp);
-=======
 			~x_accX = Synth(\synth_accX, [\out, ~accX_bus], ~ctrlGrp);
 			~x_accy = Synth(\synth_accY, [\out, ~accY_bus], ~ctrlGrp);
 			~x_accZ = Synth(\synth_accZ, [\out, ~accZ_bus], ~ctrlGrp);
 
 			~x_hold = Synth(\synth_hold, [\out, ~hold_bus], ~ctrlGrp);
 
+			~x_pot1 = Synth(\synth_pot1, [\out, ~pot1_bus], ~ctrlGrp);
+			~x_pot2 = Synth(\synth_pot2, [\out, ~pot2_bus], ~ctrlGrp);
+			~x_fader1 = Synth(\synth_fader1, [\out, ~fader1_bus], ~ctrlGrp);
+			~x_fader2 = Synth(\synth_fader2, [\out, ~fader2_bus], ~ctrlGrp);
+
 
 			Synth(\mic, [\in, 0, \out, ~micBus], ~micGrp);
 			Synth(\ptr, [\buf, b, \out, ~ptrBus, \valBtn, ~hold_bus], ~ptrGrp);
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
 			Synth(\rec, [\ptrIn, ~ptrBus, \micIn, ~micBus, \buf, b], ~recGrp);
 
 			s.sync;
@@ -290,7 +277,12 @@ s.waitForBoot({
 					\micBus_1, ~micBus,
 					\gr_accX_bus, ~accX_bus,
 					\gr_accY_bus, ~accY_bus,
-					\gr_accZ_bus, ~accZ_bus
+					\gr_accZ_bus, ~accZ_bus,
+					\gr_pot1_bus, ~pot1_bus,
+					\gr_pot2_bus, ~pot2_bus,
+					\gr_fader1_bus, ~fader1_bus,
+					\gr_fader2_bus, ~fader2_bus
+
 				], ~granGrp);
 			});
 			s.sync;
@@ -299,8 +291,4 @@ s.waitForBoot({
 	)
 });
 )
-<<<<<<< HEAD
-//ServerQuit.add({ 0.exit }); // quit if the button is pressed
-=======
 ServerQuit.add({ 0.exit }); // quit if the button is pressed
->>>>>>> a8b8d11fbf839198286d8fc6d8e0c3fa4d2a114b
