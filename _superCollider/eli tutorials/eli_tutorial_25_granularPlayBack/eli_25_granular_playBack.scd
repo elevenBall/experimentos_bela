@@ -1,6 +1,9 @@
 //https://www.youtube.com/watch?v=WBqAM_94TW4
 //SuperCollider Tutorial: 25. Granular Synthesis, Part I
 
+
+
+
 (
 {
 	var sig;
@@ -8,12 +11,12 @@
 		2,
 		Dust.ar(100),
 		0.2,
-		~b,
+		~b1,
 		MouseX.kr(0.5,2.1),
 		(
-			Phasor.ar(0, MouseY.kr(0.1,2,1) * BufRateScale.ir(~b), 0, BufSamples.ir(~b) -1)
+			Phasor.ar(0, MouseY.kr(0.1,2,1) * BufRateScale.ir(~b1), 0, BufSamples.ir(~b1) -1)
 			+ LFNoise1.ar(100).bipolar(0.0 * SampleRate.ir)
-		) / BufSamples.ir(~b),
+		) / BufSamples.ir(~b1),
 		2,
 		0,
 		-1,
@@ -26,7 +29,7 @@
 
 (
 SynthDef(\gs, {
-	arg sync=1, dens=20, dur=0.1, durRand=1, buf=~b.bufnum,
+	arg sync=1, dens=20, dur=0.1, durRand=1, buf=~b1.bufnum,
 	rate=1, pos=0, posSpeed=1, posRand=0,
 	grainEnv=(-1), pan=0, panHz=0.1, panRand=0,
 	atk=1, sus=2, rel=1, c0=1, c1=(-1), amp=1, out=0;
@@ -68,7 +71,7 @@ SynthDef(\gs, {
 
 
 
-a = Synth(\gs, [\buf, ~b]);
+a = Synth(\gs, [\buf, ~b1]);
 a.free;
 
 
@@ -77,7 +80,7 @@ a.free;
 
 (
 Synth(\gs, [
-	\buf, ~b,
+	\buf, ~b1,
 	\sync, 0,
 	\dens, 400,
 	\dur, 0.2,
@@ -99,7 +102,7 @@ Synth(\gs, [
 			rate = rate.midicps * [2,1,0.5,0.25].choose;
 			4.do({
 				Synth(\gs, [
-					\buf, ~b,
+					\buf, ~b1,
 					\sync, 1,
 					\dens, rate * rrand(-0.15, 0.15).midiratio,
 					\dur, 0.02,
@@ -121,7 +124,7 @@ Synth(\gs, [
 	loop{
 		(2..5).do({
 			Synth(\gs, [
-				\buf, ~b,
+				\buf, ~b1,
 				\sync, 1,
 				\dens, [0.25,0.5,1,2,4,8].choose,
 				\dur, exprand(0.001, 0.025),
@@ -158,3 +161,6 @@ Synth(\gs, [
 }).play;
 )
 
+
+~r1.stop;
+~r2.stop;
