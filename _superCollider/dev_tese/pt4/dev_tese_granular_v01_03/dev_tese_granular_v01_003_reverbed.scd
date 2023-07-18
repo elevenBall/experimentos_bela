@@ -46,45 +46,53 @@ s.waitForBoot({
 
 				SynthDef(\synth_accX, {
 					var sig;
-					sig = AnalogIn.ar(0);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(0);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 				SynthDef(\synth_accY, {
 					var sig;
-					sig = AnalogIn.ar(1);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(1);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 				SynthDef(\synth_accZ, {
 					var sig;
-					sig = AnalogIn.ar(2);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(2);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
 				SynthDef(\synth_hold, {
 					var sig;
-					sig = DigitalIn.ar(0);
+					sig = \ui_in.ar(0);
+					//sig = DigitalIn.ar(0);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
 				SynthDef(\synth_pot1, {
 					var sig;
-					sig = AnalogIn.ar(3);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(3);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 				SynthDef(\synth_pot2, {
 					var sig;
-					sig = AnalogIn.ar(4);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(4);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
 				SynthDef(\synth_fader1, {
 					var sig;
-					sig = AnalogIn.ar(5);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(5);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 				SynthDef(\synth_fader2, {
 					var sig;
-					sig = AnalogIn.ar(6);
+					sig = \ui_in.ar(0);
+					//sig = AnalogIn.ar(6);
 					Out.ar(\out.ar(0), sig);
 				}).add;
 
@@ -100,21 +108,21 @@ s.waitForBoot({
 				s.sync;
 
 				SynthDef(\ptr, {
-					arg out=0, buf=0, rate=1;
-					var sig;
+					//arg out=0, buf=0, rate=1;
+					var sig, rate;
 					rate = In.ar(\valBtn.ar(0));
-					sig = Phasor.ar(0, BufRateScale.kr(buf)*rate, 0, BufFrames.kr(buf));
-					Out.ar(out, sig);
+					sig = Phasor.ar(0, BufRateScale.kr(\buf.kr(0))*\rate.kr(1), 0, BufFrames.kr(\buf.kr(0)));
+					Out.ar(\out.kr(0), sig);
 				}).add;
 
 				s.sync;
 
 				SynthDef(\rec, {
-					arg ptrIn=0, micIn=0, buf=0;
+					//arg ptrIn=0, micIn=0, buf=0;
 					var ptr, sig;
-					ptr = In.ar(ptrIn, 1);
-					sig = In.ar(micIn, 1);
-					BufWr.ar(sig, buf, ptr);
+					ptr = In.ar(\ptrIn.kr(0), 1);
+					sig = In.ar(\micIn.kr(0), 1);
+					BufWr.ar(sig, \buf.kr(0), ptr);
 				}).add;
 
 				s.sync;
@@ -199,11 +207,11 @@ s.waitForBoot({
 						maxGrains:8
 					);
 					sig = sig * env * amp;
-					sig = (sig*0.8) + (In.ar(micBus_1, 1)*0.8);
+					sig = (sig*0.8) + (In.ar(micBus_1, 1)*0.1);
 
-					sigDel = DelayN.ar(sig, 0.2, 0.2)*0.2;
+					//sigDel = DelayN.ar(sig, 0.2, 0.2)*0.2;
 
-					sig = sig + sigDel;
+					//sig = sig + sigDel;
 
 					Out.ar(out, sig);
 					s.sync
@@ -280,5 +288,6 @@ s.waitForBoot({
 	)
 });
 )
+
 
 //ServerQuit.add({ 0.exit }); // quit if the button is pressed
