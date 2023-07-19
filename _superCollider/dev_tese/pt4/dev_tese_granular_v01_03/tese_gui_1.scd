@@ -18,7 +18,7 @@ w = Window("window name",
 .knobColor_(Color.fromHexString("05F2DB"))
 .action_({ |v|
 	var val = v.value * 1;
-	~x_fader1.set(\ui_in, val);
+	~x_fader2.set(\ui_in, val);
 });
 
 ~slider_2 = Slider(w, Rect( 120, 20, 50, 250))
@@ -26,7 +26,7 @@ w = Window("window name",
 .knobColor_(Color.fromHexString("05F2DB"))
 .action_({ |v|
 	var val = v.value * 1;
-	~x_fader2.set(\ui_in, val);
+	~x_fader1.set(\ui_in, val);
 });
 
 ~knb_1 = Knob(w, Rect(230, 60, 80, 80))
@@ -60,7 +60,7 @@ w = Window("window name",
 	var val = v.value * 1;
 	~x_accY.set(\ui_in, val);
 });
-~slider_X = Slider(w, Rect( (20+90+50), 320, 50, 250))
+~slider_Z = Slider(w, Rect( (20+90+50), 320, 50, 250))
 .background_(Color.fromHexString("078C8C"))
 .knobColor_(Color.fromHexString("05F2DB"))
 .action_({ |v|
