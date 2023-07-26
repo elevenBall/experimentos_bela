@@ -33,14 +33,14 @@ w = Window("window name",
 .mode_(\vert)
 .action_({ |v|
 	var val = v.value * 1;
-	~x_pot1.set(\ui_in, val);
+	~x_pot2.set(\ui_in, val);
 });
 
 ~knb_2 = Knob(w, Rect(370, 60, 80, 80))
 .mode_(\vert)
 .action_({ |v|
 	var val = v.value * 1;
-	~x_pot2.set(\ui_in, val);
+	~x_pot1.set(\ui_in, val);
 });
 
 
